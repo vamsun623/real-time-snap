@@ -232,6 +232,7 @@ const modalOverlay = document.getElementById('modal-overlay');
 const tooltipLayer = document.getElementById('card-tooltip');
 const pauseOverlay = document.getElementById('pause-overlay');
 const pauseBtn = document.getElementById('pause-button');
+const surrenderBtn = document.getElementById('surrender-button');
 const resumeBtn = document.getElementById('resume-button');
 
 // Initialization
@@ -261,6 +262,7 @@ function init() {
     // UI Event Listeners
     snapBtn.addEventListener('click', activatePlayerSnap);
     pauseBtn.addEventListener('click', togglePause);
+    surrenderBtn.addEventListener('click', handleSurrender);
     resumeBtn.addEventListener('click', togglePause);
 
     // Drag and Drop Zones
@@ -295,6 +297,13 @@ function init() {
     });
 
     // 強制比例檢查提醒 (透過 CSS 控制 720x1024)
+}
+
+function handleSurrender() {
+    if (state.isGameOver || state.isPaused) return;
+    if (confirm("確定要投降嗎？這將會輸掉本局，但不會記錄在勝敗榜上。")) {
+        endGame(true); // true 代表跳過資料庫記錄
+    }
 }
 
 //移除舊的 getRandomDeck，改用 cards.js 的 getNextCard
@@ -980,7 +989,7 @@ function checkEarlyTermination() {
     }
 }
 
-function endGame() {
+function endGame(skipRecord = false) {
     state.isGameOver = true;
     state.intervals.forEach(id => clearInterval(id));
     AudioEngine.stopBGM();
@@ -992,12 +1001,14 @@ function endGame() {
         else if (z.power < state.npc.zones[i].power) npcZones++;
     });
 
-    const isWin = playerZones > npcZones;
-    const isDraw = playerZones === npcZones;
+    const isWin = skipRecord ? false : (playerZones > npcZones);
+    const isDraw = skipRecord ? false : (playerZones === npcZones);
     const result = isWin ? 'win' : (isDraw ? 'draw' : 'loss');
 
-    // 調用資料庫
-    Database.recordResult(state.playerName, result);
+    // 調用資料庫 (若非投降)
+    if (!skipRecord) {
+        Database.recordResult(state.playerName, result);
+    }
 
     modalOverlay.classList.remove('hidden');
 
@@ -1011,13 +1022,18 @@ function endGame() {
             敗: <span class="highlight" style="color:var(--npc-color)">${stats.losses}</span> | 
             平: <span class="highlight">${stats.draws}</span>
         </div>
+        ${skipRecord ? '<div style="color:rgba(255,255,255,0.5); font-size: 0.8rem; margin-top:5px;">(本局因投降未列入統計)</div>' : ''}
     `;
-
 
     const title = document.getElementById('result-title');
     const banner = document.querySelector('.result-banner');
 
-    if (isWin) {
+    if (skipRecord) {
+        title.textContent = "你選擇了投降 (SURRENDER)";
+        title.style.color = 'var(--npc-color)';
+        banner.style.backgroundImage = `url('${ASSETS.defeat}')`;
+        playSFX('defeat');
+    } else if (isWin) {
         title.textContent = "戰鬥勝利 (VICTORY)";
         title.style.color = 'var(--player-color)';
         banner.style.backgroundImage = `url('${ASSETS.victory}')`;
@@ -1034,7 +1050,7 @@ function endGame() {
         playSFX('defeat');
     }
 
-    document.getElementById('result-text').innerHTML = `
+    document.getElementById('result-text').innerHTML = skipRecord ? "你在絕望中撤退了..." : `
         攻佔區域: ${playerZones} | 敵方佔領: ${npcZones}<br>
         最終對決積分: ${playerZones * 10 * state.multiplier} (X${state.multiplier})
     `;

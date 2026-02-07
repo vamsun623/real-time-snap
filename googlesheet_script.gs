@@ -1,5 +1,18 @@
+function doGet(e) {
+  return handleRequest(e.parameter);
+}
+
 function doPost(e) {
-  var params = JSON.parse(e.postData.contents);
+  var params;
+  try {
+    params = JSON.parse(e.postData.contents);
+  } catch (err) {
+    params = e.parameter;
+  }
+  return handleRequest(params);
+}
+
+function handleRequest(params) {
   var action = params.action;
   var name = params.name;
   
@@ -23,15 +36,16 @@ function doPost(e) {
   }
   
   if (action === "record") {
-    var isWin = params.isWin;
-    var isDraw = params.isDraw;
+    // 處理字串轉型 (GET 傳過來的是字串)
+    var isWin = String(params.isWin) === "true";
+    var isDraw = String(params.isDraw) === "true";
     
     if (rowIndex === -1) {
       sheet.appendRow([name, isWin ? 1 : 0, (!isWin && !isDraw) ? 1 : 0, isDraw ? 1 : 0, new Date()]);
     } else {
-      var wins = data[rowIndex-1][1];
-      var losses = data[rowIndex-1][2];
-      var draws = data[rowIndex-1][3];
+      var wins = Number(data[rowIndex-1][1]);
+      var losses = Number(data[rowIndex-1][2]);
+      var draws = Number(data[rowIndex-1][3]);
       
       if (isWin) wins++;
       else if (isDraw) draws++;
