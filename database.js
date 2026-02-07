@@ -1,6 +1,6 @@
 // Google Sheets Database Interface
 // 使用者需要在下方填入部署後的 Apps Script URL
-const API_URL = "";
+const API_URL = "https://script.google.com/macros/s/AKfycbxysNR6MmdOwlZ1c0On8gN4auK3PZAosVI0QsN1rZzEopXHqIem5YQRjOsNk9n9FUrS/exec";
 
 const Database = {
     async recordResult(name, result) {
