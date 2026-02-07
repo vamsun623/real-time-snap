@@ -213,7 +213,7 @@ body {
 #pause-button,
 #surrender-button {
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--glass-border);
+    border: 2px solid var(--glass-border);
     color: #fff;
     font-size: 1.5rem;
     padding: 5px 15px;
@@ -225,10 +225,16 @@ body {
     align-items: center;
 }
 
+#surrender-button {
+    border-color: rgba(239, 68, 68, 0.6);
+    color: #ef4444;
+}
+
 #surrender-button:hover {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.3);
     border-color: var(--npc-color);
-    color: var(--npc-color);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }
 
 #timer {
