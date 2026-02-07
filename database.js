@@ -27,7 +27,9 @@ const Database = {
 
             // 用 fetch 的 no-cors 模式，雖然看不到回應但請求會發出去
             fetch(url.toString(), { mode: 'no-cors' });
-            console.log("資料已發送至試算表 (姓名: " + name + ")");
+            console.log("資料已發送至試算表: " + url.toString());
+            // 暫時加上一個通知，確認程式碼有執行到這
+            alert("正在上傳戰績至 Google 表格...");
         } catch (e) {
             console.error("Database Error:", e);
         }
