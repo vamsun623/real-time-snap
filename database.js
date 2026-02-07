@@ -18,17 +18,16 @@ const Database = {
         }
 
         try {
-            await fetch(API_URL, {
-                method: "POST",
-                mode: "no-cors", // Apps Script doPost 限制
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "record",
-                    name: name,
-                    isWin: isWin,
-                    isDraw: isDraw
-                })
-            });
+            // 使用 GET 請求傳送資料，避免 CORS 複雜度以及 Apps Script POST 重定向問題
+            const url = new URL(API_URL);
+            url.searchParams.append('action', 'record');
+            url.searchParams.append('name', name);
+            url.searchParams.append('isWin', isWin);
+            url.searchParams.append('isDraw', isDraw);
+
+            // 用 fetch 的 no-cors 模式，雖然看不到回應但請求會發出去
+            fetch(url.toString(), { mode: 'no-cors' });
+            console.log("資料已發送至試算表 (姓名: " + name + ")");
         } catch (e) {
             console.error("Database Error:", e);
         }
