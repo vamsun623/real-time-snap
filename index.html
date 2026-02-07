@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Snap: 極限對決</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@500;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <button id="mute-toggle" title="切換音效">🔊</button>
+        <!-- NPC HUD -->
+        <div id="npc-hud" class="hud-bar">
+            <div class="npc-info">
+                <div class="avatar npc-avatar">AI</div>
+                <div class="stat-group">
+                    <div class="name">對手 NPC</div>
+                    <div class="npc-energy-text">能量: 0 / 10</div>
+                </div>
+            </div>
+            <div id="npc-snap-indicator" class="snap-badge">X1</div>
+        </div>
+
+        <!-- Header: Timer & Global Status -->
+        <header id="game-header">
+            <button id="pause-button" title="暫停遊戲">⏸</button>
+            <div class="time-container">
+                <span id="timer">40</span>
+            </div>
+            <div class="snap-multiplier-display">X1</div>
+        </header>
+
+        <!-- Battleground: 3 Zones -->
+        <main id="battleground">
+            <div class="zone" id="zone-1" data-zone-index="0">
+                <div class="zone-bg"></div>
+                <div class="zone-content">
+                    <div class="npc-power-display">0</div>
+                    <div class="slots npc-slots"></div>
+                    <div class="zone-info-box">
+                        <div class="zone-name">希塔德爾</div>
+                    </div>
+                    <div class="slots player-slots"></div>
+                    <div class="player-power-display">0</div>
+                </div>
+            </div>
+
+            <div class="zone" id="zone-2" data-zone-index="1">
+                <div class="zone-bg"></div>
+                <div class="zone-content">
+                    <div class="npc-power-display">0</div>
+                    <div class="slots npc-slots"></div>
+                    <div class="zone-info-box">
+                        <div class="zone-name">量子領域</div>
+                    </div>
+                    <div class="slots player-slots"></div>
+                    <div class="player-power-display">0</div>
+                </div>
+            </div>
+
+            <div class="zone" id="zone-3" data-zone-index="2">
+                <div class="zone-bg"></div>
+                <div class="zone-content">
+                    <div class="npc-power-display">0</div>
+                    <div class="slots npc-slots"></div>
+                    <div class="zone-info-box">
+                        <div class="zone-name">死亡之域</div>
+                    </div>
+                    <div class="slots player-slots"></div>
+                    <div class="player-power-display">0</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Tooltip Overlay -->
+        <div id="card-tooltip" class="hidden">
+            <div class="tooltip-name"></div>
+            <div class="tooltip-type"></div>
+            <div class="tooltip-desc"></div>
+        </div>
+
+        <!-- Energy Hint Row -->
+        <div id="energy-hint-row">
+            <div id="energy-bar-container">
+                <div class="energy-markers">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div id="energy-fill"></div>
+            </div>
+            <div id="energy-text">能量: 0 / 10</div>
+        </div>
+
+        <!-- Footer: Hand & Controls -->
+        <footer id="footer-container">
+            <div id="hand-wrapper">
+                <div id="hand-container"></div>
+            </div>
+
+            <div id="footer-controls">
+                <div id="footer-bottom-row">
+                    <button id="snap-button">
+                        <div class="button-content">
+                            <span class="snap-text">SNAP!</span>
+                            <span class="snap-subtext">+3 能量</span>
+                        </div>
+                    </button>
+                    <div id="player-snap-indicator" class="snap-badge">NORMAL X1</div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Start Menu -->
+        <div id="start-overlay">
+            <div class="start-content">
+                <h1 class="game-title">REAL-TIME SNAP</h1>
+                <p class="game-subtitle">極限瞬息：無路可退</p>
+                <div class="start-hints">
+                    <span>• 平滑能量累積</span>
+                    <span>• 橫向操作佈局</span>
+                    <span>• 全音效沉浸體驗</span>
+                </div>
+                <div class="name-input-group">
+                    <input type="text" id="player-name-input" placeholder="請輸入你的英雄大名" maxlength="10">
+                </div>
+                <button id="start-button">開始戰鬥 (START)</button>
+                <button id="deck-builder-btn">牌組構成 (DECK BUILDER)</button>
+                <div id="start-tech-specs">
+                    <p>偵測到 Web Audio API 支援：<span id="audio-support">檢查中...</span></p>
+                    <a href="#" id="sound-test-btn">點此測試音效 (Sound Test)</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="pause-overlay" class="hidden">
+            <div class="pause-content">
+                <h2>遊戲暫停中</h2>
+                <button id="resume-button">繼續戰鬥</button>
+            </div>
+        </div>
+
+        <!-- End Game Modal -->
+        <div id="modal-overlay" class="hidden">
+            <div id="result-modal">
+                <div class="result-banner"></div>
+                <div class="result-content">
+                    <h2 id="result-title">GAME OVER</h2>
+                    <p id="result-text">Result summary goes here...</p>
+                    <div id="player-stats-display" class="stats-box">
+                        正在取得最新戰績...
+                    </div>
+                    <button class="retry-btn" onclick="location.reload()">再次對抗</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deck Builder Menu -->
+        <div id="deck-builder-overlay" class="hidden">
+            <div class="deck-builder-content">
+                <header class="builder-header">
+                    <h2>卡牌收藏與牌組設定</h2>
+                    <div class="builder-tabs">
+                        <button id="tab-player" class="active">玩家 (PLAYER)</button>
+                        <button id="tab-npc">電腦 (NPC)</button>
+                    </div>
+                </header>
+                <div class="builder-body">
+                    <p class="builder-hint">請點擊卡牌來加入或移除牌組 (需選滿 8 張)</p>
+                    <div id="all-cards-grid" class="card-grid">
+                        <!-- 由 JS 生成 40 張卡牌 -->
+                    </div>
+                </div>
+                <footer class="builder-footer">
+                    <div class="selection-status">已選卡牌: <span id="current-deck-count">0</span> / 8</div>
+                    <button id="close-builder-btn" class="primary-btn">儲存並返回 (SAVE & CLOSE)</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="cards.js"></script>
+    <script src="database.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
