@@ -348,6 +348,12 @@ function togglePause() {
     pauseOverlay.classList.toggle('hidden', !state.isPaused);
     // 暫停時 UI 特效
     document.body.style.filter = state.isPaused ? 'grayscale(0.5)' : 'none';
+    // 同步 BGM
+    if (state.isPaused) {
+        AudioEngine.stopBGM();
+    } else if (!isMuted) {
+        AudioEngine.play('bgm', true);
+    }
 }
 
 function updateTimer() {

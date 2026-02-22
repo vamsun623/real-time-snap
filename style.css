@@ -711,6 +711,7 @@ body {
     animation: playable-pulse 1s ease-in-out infinite, playable-slide 2s linear infinite;
     z-index: 100;
     box-shadow: 0 0 8px #00ffcc, 0 0 18px rgba(0, 200, 255, 0.7);
+    transform: translateX(4px);
 }
 
 /* (Arrow removed - top-bar indicator is sufficient) */
