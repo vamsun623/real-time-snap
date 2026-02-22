@@ -418,6 +418,71 @@ function renderHand() {
             hideEnergyPreview();
         });
 
+        // --- Touch Support for Mobile Dragging ---
+        let touchStartX, touchStartY;
+        let activeClone = null;
+
+        handCardEl.addEventListener('touchstart', (e) => {
+            if (state.isGameOver || state.isPaused || card.cost > state.player.energy) return;
+
+            // Handle Tooltip toggle on touch
+            if (!tooltipLayer.classList.contains('hidden')) {
+                hideTooltip();
+            } else {
+                showTooltip(card);
+                updateTooltipPos(e.touches[0]);
+            }
+
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+
+            // Create a clone for visual feedback during dragging
+            activeClone = handCardEl.cloneNode(true);
+            activeClone.classList.add('dragging-clone');
+            activeClone.style.position = 'fixed';
+            activeClone.style.left = `${touchStartX - 50}px`;
+            activeClone.style.top = `${touchStartY - 70}px`;
+            activeClone.style.zIndex = '10000';
+            activeClone.style.pointerEvents = 'none';
+            document.body.appendChild(activeClone);
+
+            handCardEl.classList.add('dragging');
+            showEnergyPreview(card.cost);
+        }, { passive: true });
+
+        handCardEl.addEventListener('touchmove', (e) => {
+            if (!activeClone) return;
+            const touch = e.touches[0];
+            activeClone.style.left = `${touch.clientX - 50}px`;
+            activeClone.style.top = `${touch.clientY - 70}px`;
+
+            // Highlight zones under touch
+            const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+            const zone = elementUnder?.closest('.zone');
+            document.querySelectorAll('.zone').forEach(z => z.classList.remove('drag-over'));
+            if (zone) zone.classList.add('drag-over');
+
+            if (!tooltipLayer.classList.contains('hidden')) hideTooltip();
+        }, { passive: true });
+
+        handCardEl.addEventListener('touchend', (e) => {
+            if (!activeClone) return;
+            const touch = e.changedTouches[0];
+            const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+            const zone = elementUnder?.closest('.zone');
+
+            if (zone) {
+                const zoneIndex = parseInt(zone.dataset.zoneIndex);
+                deployPlayerCard(index, zoneIndex);
+            }
+
+            document.querySelectorAll('.zone').forEach(z => z.classList.remove('drag-over'));
+            handCardEl.classList.remove('dragging');
+            if (activeClone) activeClone.remove();
+            activeClone = null;
+            hideEnergyPreview();
+        });
+
         handEl.appendChild(handCardEl);
     });
     updateCardHighlights();

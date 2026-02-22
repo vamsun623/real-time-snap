@@ -9,6 +9,12 @@
     --text-main: #f8fafc;
     --accent-gold: #fbbf24;
     --jp-font: 'Noto Sans TC', sans-serif;
+
+    /* Responsive Variables */
+    --card-w: 110px;
+    --card-h: 160px;
+    --hand-card-w: 100px;
+    --hand-card-h: 140px;
 }
 
 /* Name Input & Stats Styles */
@@ -75,8 +81,10 @@ body {
 }
 
 #game-container {
-    width: 720px;
-    height: 1024px;
+    width: 100%;
+    max-width: 720px;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     background:
@@ -86,6 +94,8 @@ body {
     overflow: hidden;
     border: 1px solid #333;
     transition: background 1s ease;
+    touch-action: none;
+    /* Prevents default mobile gestures like zoom/scroll */
 }
 
 #mute-toggle {
@@ -238,7 +248,7 @@ body {
 }
 
 #timer {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 900;
     color: var(--accent-gold);
     text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
@@ -246,23 +256,22 @@ body {
 
 .npc-power-display,
 .player-power-display {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-    border: 3px solid #fff;
+    border: 2px solid #fff;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.8rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    text-shadow: 1px 1px 0 #000;
     box-shadow:
-        0 0 15px rgba(0, 0, 0, 0.8),
-        inset 0 0 10px rgba(255, 255, 255, 0.1);
+        0 0 10px rgba(0, 0, 0, 0.8);
     position: relative;
     z-index: 100;
-    margin: 8px auto;
+    margin: 4px auto;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -305,12 +314,10 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    padding: 10px 15px 5px 15px;
-    /* 上邊距大幅縮小並移動 */
+    gap: 8px;
+    padding: 5px 10px;
     align-items: center;
-    transform: translateY(-20px);
-    /* 戰場整體上移 */
+    max-height: 550px;
 }
 
 .zone {
@@ -387,8 +394,8 @@ body {
 
 /* Card Visuals (Standard Aspect Ratio) */
 .card {
-    width: 110px;
-    height: 160px;
+    width: var(--card-w);
+    height: var(--card-h);
     background-color: var(--card-bg);
     background-size: cover;
     background-position: center;
@@ -533,8 +540,8 @@ body {
 }
 
 .hand-card {
-    width: 100px;
-    height: 140px;
+    width: var(--hand-card-w);
+    height: var(--hand-card-h);
     position: relative !important;
     /* 解除 absolute */
     transform: none !important;
@@ -584,11 +591,11 @@ body {
 
 /* Footer Section */
 #footer-container {
-    height: 220px;
+    height: 180px;
     background: linear-gradient(0deg, #000 80%, transparent);
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 10px;
     position: relative;
 }
 
@@ -1025,4 +1032,89 @@ body {
 #deck-builder-btn:hover {
     background: var(--accent-gold);
     color: #000;
+}
+
+/* --- Media Queries for Mobile --- */
+@media (max-width: 480px) {
+    :root {
+        --card-w: 80px;
+        --card-h: 116px;
+        --hand-card-w: 70px;
+        --hand-card-h: 98px;
+    }
+
+    .hud-bar {
+        padding: 10px 15px;
+    }
+
+    #game-header {
+        height: 60px;
+        padding: 0 15px;
+    }
+
+    #timer {
+        font-size: 2rem;
+    }
+
+    .npc-power-display,
+    .player-power-display {
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+
+    .zone-name {
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .card-cost,
+    .card-power {
+        width: 22px;
+        height: 22px;
+        font-size: 0.8rem;
+    }
+
+    .card-name {
+        font-size: 0.6rem;
+        margin-top: 15px;
+    }
+
+    #footer-container {
+        height: 140px;
+    }
+
+    #footer-controls {
+        width: 120px;
+    }
+
+    #snap-button {
+        width: 100px;
+        height: 70px;
+    }
+
+    .snap-text {
+        font-size: 1.2rem;
+    }
+
+    .snap-subtext {
+        font-size: 0.7rem;
+    }
+
+    .game-title {
+        font-size: 3rem;
+    }
+
+    .game-subtitle {
+        font-size: 1.1rem;
+    }
+
+    #start-button {
+        padding: 15px 40px;
+        font-size: 1.5rem;
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
 }
