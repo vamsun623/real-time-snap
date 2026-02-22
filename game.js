@@ -4,14 +4,14 @@ const ASSETS = {
     victory: 'assets/victory_splash_1770129251400.png',
     defeat: 'assets/defeat_splash_1770129268179.png',
     cards: {
-        '美國隊長': 'assets/card_cap_1770129287218.png',
-        '索爾': 'assets/card_thor_1770129300600.png',
-        '藍驚奇': 'assets/card_blue_marvel_1770129349527.png',
-        'X教授': 'assets/card_profx_hover_1770129364474.png',
-        '蟻人': 'assets/card_antman_1770129417751.png',
-        '鋼鐵心': 'assets/card_ironheart_1770129434390.png',
-        '浩克': 'assets/card_hulk_proper.png',
-        '鋼鐵人': 'assets/card_ironman_proper.png'
+        '美國隊長': 'assets/card_cap.png',
+        '索爾': 'assets/card_thor.png',
+        '藍驚奇': 'assets/card_blue_marvel.png',
+        'X教授': 'assets/card_profx.png',
+        '蟻人': 'assets/card_antman.png',
+        '鋼鐵心': 'assets/card_ironheart.png',
+        '浩克': 'assets/card_hulk.png',
+        '鋼鐵人': 'assets/card_ironman.png'
     },
     sfx: {
         victory: 'assets/sfx/victory.mp3',
@@ -635,7 +635,7 @@ function npcTick() {
             // --- 40 張牌專屬邏輯 (Special logic for all 40 cards) ---
 
             // 1. 對手感應卡 (Reactive Cards)
-            if (card.action === 'check_enemy' || ['星爵', '火箭浣熊', '格魯特', '德拔斯', '狂舞'].includes(card.name)) {
+            if (card.action === 'check_enemy' || ['星爵', '火箭浣熊', '格魯特', '德拔斯', '葛摩菈'].includes(card.name)) {
                 if (pZone.cards.length > 0) score += (card.bonus || 3) * 15;
                 else score -= 10; // 對手不在這，效益低
             }
@@ -817,7 +817,25 @@ function triggerOnReveal(card, zoneIndex, side) {
                 const otherZs = [0, 1, 2].filter(z => z !== zoneIndex);
                 const targetZ = otherZs[Math.floor(Math.random() * otherZs.length)];
                 if (state[side].zones[targetZ].cards.length < 4) {
-                    state[side].zones[targetZ].cards.push({ name: '老虎', power: 8, cost: 0, type: 'none', desc: '召喚物' });
+                    const token = {
+                        name: '老虎',
+                        power: 8,
+                        cost: 0,
+                        type: 'none',
+                        desc: '召喚物',
+                        img: 'assets/card_tiger_token.png'
+                    };
+                    state[side].zones[targetZ].cards.push(token);
+
+                    // 渲染召喚物到畫面
+                    const sideSlot = side === 'player' ? 'player-slots' : 'npc-slots';
+                    const slot = document.querySelector(`#zone-${targetZ + 1} .${sideSlot}`);
+                    if (slot) {
+                        const cardEl = createCardElement(token);
+                        cardEl.classList.add('deploying', 'landing');
+                        slot.appendChild(cardEl);
+                        setTimeout(() => cardEl.classList.remove('landing'), 400);
+                    }
                 }
                 break;
             case 'debuff_enemy_hand':
