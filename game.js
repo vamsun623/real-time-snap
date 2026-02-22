@@ -437,14 +437,23 @@ function renderHand() {
             // Create a clone for visual feedback during dragging
             activeClone = handCardEl.cloneNode(true);
             activeClone.classList.add('dragging-clone');
-            activeClone.style.position = 'fixed';
+
+            const container = document.getElementById('game-container');
+            const rect = container.getBoundingClientRect();
+
+            activeClone.style.position = 'absolute';
+            // Coordinates relative to #game-container
+            const x = touchStartX - rect.left - 50;
+            const y = touchStartY - rect.top - 70;
+
             activeClone.style.left = '0';
             activeClone.style.top = '0';
-            activeClone.style.transform = `translate3d(${touchStartX - 50}px, ${touchStartY - 70}px, 0)`;
+            activeClone.style.transform = `translate3d(${x}px, ${y}px, 0)`;
             activeClone.style.zIndex = '10000';
             activeClone.style.pointerEvents = 'none';
             activeClone.style.willChange = 'transform';
-            document.body.appendChild(activeClone);
+
+            container.appendChild(activeClone);
 
             handCardEl.classList.add('dragging');
             showEnergyPreview(card.cost);
@@ -454,8 +463,14 @@ function renderHand() {
             if (!activeClone) return;
             const touch = e.touches[0];
 
+            const container = document.getElementById('game-container');
+            const rect = container.getBoundingClientRect();
+
+            const x = touch.clientX - rect.left - 50;
+            const y = touch.clientY - rect.top - 70;
+
             // Use translate3d for better performance
-            activeClone.style.transform = `translate3d(${touch.clientX - 50}px, ${touch.clientY - 70}px, 0)`;
+            activeClone.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
             // Prevent scrolling while dragging
             if (e.cancelable) e.preventDefault();
