@@ -1102,19 +1102,67 @@ body {
     }
 
     .game-title {
-        font-size: 3rem;
+        font-size: 2.2rem;
+        margin-bottom: 0px;
     }
 
     .game-subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+    }
+
+    .start-hints {
+        gap: 6px;
+        margin-bottom: 20px;
+        font-size: 0.8rem;
     }
 
     #start-button {
-        padding: 15px 40px;
-        font-size: 1.5rem;
+        padding: 10px 40px;
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    #deck-builder-btn {
+        padding: 10px 30px;
+        margin-top: 0;
+    }
+
+    /* Deck Builder Mobile Refinements */
+    .deck-builder-content {
+        width: 95%;
+        height: 95%;
+    }
+
+    .builder-header {
+        padding: 10px;
+    }
+
+    .builder-header h2 {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+    }
+
+    .builder-body {
+        padding: 10px;
+    }
+
+    .builder-footer {
+        padding: 8px;
+    }
+
+    .selection-status {
+        font-size: 0.85rem;
+    }
+
+    .primary-btn {
+        padding: 6px 15px;
+        font-size: 0.85rem;
     }
 
     .card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+        gap: 5px;
     }
 }
