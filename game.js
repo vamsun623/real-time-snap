@@ -381,8 +381,6 @@ function activatePlayerSnap() {
     state.player.energy = Math.min(state.player.energy + 3, state.player.maxEnergy);
 
     snapBtn.classList.add('disabled');
-    playerSnapIndicator.textContent = "SNAPPED X2";
-    playerSnapIndicator.style.background = "#e11d48";
 
     playSFX('snap'); // 播放 SNAP 音效
     renderHUD();
