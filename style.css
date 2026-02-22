@@ -649,13 +649,15 @@ body {
     color: var(--accent-gold);
 }
 
-/* Hand UI: Horizontal Left Layout */
+/* Hand UI: Horizontal Centered Layout */
 #hand-wrapper {
     flex: 1;
     height: 100%;
     display: flex;
     align-items: center;
-    padding-left: 10px;
+    justify-content: center;
+    overflow-x: auto;
+    padding: 0 6px;
 }
 
 #hand-container {
@@ -693,6 +695,69 @@ body {
 .hand-card.playable .card {
     border-color: var(--energy-color);
     box-shadow: 0 0 25px var(--energy-color);
+}
+
+/* Top-bar pulse: visible on EVERY card regardless of border color */
+.hand-card.playable::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 4px;
+    right: 4px;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #00ffcc, #0ea5e9, #00ffcc);
+    background-size: 200% 100%;
+    animation: playable-pulse 1s ease-in-out infinite, playable-slide 2s linear infinite;
+    z-index: 100;
+    box-shadow: 0 0 8px #00ffcc, 0 0 18px rgba(0, 200, 255, 0.7);
+}
+
+/* Bouncing arrow above card */
+.hand-card.playable::after {
+    content: '▶';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+    font-size: 0.55rem;
+    color: #00ffcc;
+    text-shadow: 0 0 6px #00ffcc;
+    animation: playable-bounce 0.7s ease-in-out infinite alternate;
+    z-index: 101;
+    pointer-events: none;
+}
+
+@keyframes playable-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes playable-slide {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+@keyframes playable-bounce {
+    from {
+        transform: translateX(-50%) rotate(-90deg) translateY(0);
+    }
+
+    to {
+        transform: translateX(-50%) rotate(-90deg) translateY(-4px);
+    }
 }
 
 .hand-card.selected .card {

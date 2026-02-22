@@ -56,6 +56,35 @@ const AudioEngine = {
         this.isLoaded = true;
     },
 
+    // Preload raw bytes immediately (before AudioContext exists)
+    preloadRawBytes: {},
+    async preload() {
+        const entries = Object.entries(ASSETS.sfx);
+        for (const [key, url] of entries) {
+            try {
+                const response = await fetch(url);
+                this.preloadRawBytes[key] = await response.arrayBuffer();
+            } catch (e) {
+                console.warn(`[Preload] Failed to fetch: ${key}`, e);
+            }
+        }
+    },
+
+    // Decode already-fetched bytes once AudioContext exists
+    async decodePreloaded() {
+        const keys = Object.keys(this.preloadRawBytes);
+        for (const key of keys) {
+            try {
+                // arrayBuffer may only be decoded once; clone it
+                const bufClone = this.preloadRawBytes[key].slice(0);
+                this.buffers[key] = await this.ctx.decodeAudioData(bufClone);
+            } catch (e) {
+                console.warn(`[Decode] Failed: ${key}`, e);
+            }
+        }
+        this.isLoaded = true;
+    },
+
     play(key, loop = false) {
         if (isMuted || !this.ctx) return;
         if (this.ctx.state === 'suspended') this.ctx.resume();
@@ -177,7 +206,12 @@ function unlockAudioContext() {
     console.info("[SFX] Unlocking audio context via user interaction...");
     AudioEngine.init();
     if (AudioEngine.ctx.state === 'suspended') AudioEngine.ctx.resume();
+    // Decode pre-fetched bytes now that we have an AudioContext
+    AudioEngine.decodePreloaded();
 }
+
+// 頁面一開啟就在背景預先 fetch 所有音效檔案 (不需 AudioContext)
+AudioEngine.preload();
 
 // Game State
 let state = {
