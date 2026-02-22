@@ -201,13 +201,13 @@ function toggleMute() {
     muteBtn.classList.toggle('is-muted', isMuted);
 }
 
-// 核心解鎖機制：在用戶第一次點擊時呼叫
-function unlockAudioContext() {
+// 核心解鎖機制：在用戶第一次點擊時呼叫 (async - 等待解碼完成)
+async function unlockAudioContext() {
     console.info("[SFX] Unlocking audio context via user interaction...");
     AudioEngine.init();
-    if (AudioEngine.ctx.state === 'suspended') AudioEngine.ctx.resume();
-    // Decode pre-fetched bytes now that we have an AudioContext
-    AudioEngine.decodePreloaded();
+    if (AudioEngine.ctx.state === 'suspended') await AudioEngine.ctx.resume();
+    // Await decode so buffers are ready before play() is called
+    await AudioEngine.decodePreloaded();
 }
 
 // 頁面一開啟就在背景預先 fetch 所有音效檔案 (不需 AudioContext)
@@ -1201,12 +1201,14 @@ document.getElementById('sound-test-btn').addEventListener('click', (e) => {
     alert("若沒聽到『嗶』聲，請檢查系統音量或瀏覽器分頁是否靜音。");
 });
 
-document.getElementById('start-button').addEventListener('click', () => {
+document.getElementById('start-button').addEventListener('click', async () => {
     const nameInput = document.getElementById('player-name-input');
     state.playerName = nameInput.value.trim() || '匿名英雄';
 
     document.getElementById('start-overlay').classList.add('hidden');
-    unlockAudioContext(); // 先解鎖所有音域
+
+    // Await full unlock+decode so BGM is ready immediately
+    await unlockAudioContext();
 
     // 播放開戰特效音與啟動 BGM
     playSFX('start_battle');

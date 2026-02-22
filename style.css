@@ -702,8 +702,8 @@ body {
     content: '';
     position: absolute;
     top: -5px;
-    left: 4px;
-    right: 4px;
+    left: 0;
+    right: 0;
     height: 4px;
     border-radius: 4px;
     background: linear-gradient(90deg, #00ffcc, #0ea5e9, #00ffcc);
@@ -713,20 +713,7 @@ body {
     box-shadow: 0 0 8px #00ffcc, 0 0 18px rgba(0, 200, 255, 0.7);
 }
 
-/* Bouncing arrow above card */
-.hand-card.playable::after {
-    content: '▶';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%) rotate(-90deg);
-    font-size: 0.55rem;
-    color: #00ffcc;
-    text-shadow: 0 0 6px #00ffcc;
-    animation: playable-bounce 0.7s ease-in-out infinite alternate;
-    z-index: 101;
-    pointer-events: none;
-}
+/* (Arrow removed - top-bar indicator is sufficient) */
 
 @keyframes playable-pulse {
 
@@ -1213,7 +1200,7 @@ body {
         --card-w: 80px;
         --card-h: 116px;
         --hand-card-w: 70px;
-        --hand-card-h: 98px;
+        --hand-card-h: 90px;
     }
 
     .hud-bar {
