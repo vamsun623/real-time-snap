@@ -522,6 +522,15 @@ body {
     transform: scale(0.9);
 }
 
+/* Drag Overlay: dedicated fixed overlay for touch drag clone */
+#drag-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    overflow: hidden;
+}
+
 /* Dragging Clone Styles - Crucial for mobile stability */
 .dragging-clone {
     width: var(--hand-card-w) !important;
