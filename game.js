@@ -440,10 +440,12 @@ function renderHand() {
             activeClone = handCardEl.cloneNode(true);
             activeClone.classList.add('dragging-clone');
             activeClone.style.position = 'fixed';
-            activeClone.style.left = `${touchStartX - 50}px`;
-            activeClone.style.top = `${touchStartY - 70}px`;
+            activeClone.style.left = '0';
+            activeClone.style.top = '0';
+            activeClone.style.transform = `translate3d(${touchStartX - 50}px, ${touchStartY - 70}px, 0)`;
             activeClone.style.zIndex = '10000';
             activeClone.style.pointerEvents = 'none';
+            activeClone.style.willChange = 'transform';
             document.body.appendChild(activeClone);
 
             handCardEl.classList.add('dragging');
@@ -453,8 +455,12 @@ function renderHand() {
         handCardEl.addEventListener('touchmove', (e) => {
             if (!activeClone) return;
             const touch = e.touches[0];
-            activeClone.style.left = `${touch.clientX - 50}px`;
-            activeClone.style.top = `${touch.clientY - 70}px`;
+
+            // Use translate3d for better performance
+            activeClone.style.transform = `translate3d(${touch.clientX - 50}px, ${touch.clientY - 70}px, 0)`;
+
+            // Prevent scrolling while dragging
+            if (e.cancelable) e.preventDefault();
 
             // Highlight zones under touch
             const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -463,7 +469,7 @@ function renderHand() {
             if (zone) zone.classList.add('drag-over');
 
             if (!tooltipLayer.classList.contains('hidden')) hideTooltip();
-        }, { passive: true });
+        }, { passive: false });
 
         handCardEl.addEventListener('touchend', (e) => {
             if (!activeClone) return;
@@ -478,10 +484,12 @@ function renderHand() {
 
             document.querySelectorAll('.zone').forEach(z => z.classList.remove('drag-over'));
             handCardEl.classList.remove('dragging');
-            if (activeClone) activeClone.remove();
-            activeClone = null;
+            if (activeClone) {
+                activeClone.remove();
+                activeClone = null;
+            }
             hideEnergyPreview();
-        });
+        }, { passive: true });
 
         handEl.appendChild(handCardEl);
     });
